@@ -6,5 +6,6 @@
     "python.analysis.exclude": [
         "."
     ],
-    "python.linting.enabled": false // https://github.com/microsoft/vscode-python/wiki/Migration-to-Python-Tools-Extensions
+    "python.linting.enabled": false,
+    "basedpyright.disableLanguageServices": true // https://github.com/microsoft/vscode-python/wiki/Migration-to-Python-Tools-Extensions
 }
