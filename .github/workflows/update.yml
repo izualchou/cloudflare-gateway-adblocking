@@ -1,0 +1,62 @@
+name: Sync Cloudflare Gateway Adblock Lists
+
+on:
+  schedule:
+    # Daily at 04:17 UTC (off the :00/:30 stampede to be gentler on source hosts).
+    - cron: "17 4 * * *"
+  workflow_dispatch: {}          # run manually from the Actions tab
+  push:
+    paths:
+      - "sources.txt"
+      - "whitelist.txt"
+      - "src/**"
+      - ".github/workflows/update.yml"
+
+# Never let two syncs run at once — overlapping runs would double-delete/create
+# and hit Cloudflare's rate limits harder.
+concurrency:
+  group: cloudflare-gateway-sync
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+          cache-dependency-path: requirements.txt
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Sync blocklists to Cloudflare Gateway
+        env:
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          CLOUDFLARE_TOKEN: ${{ secrets.CLOUDFLARE_TOKEN }}
+          # Optional overrides via repo Variables (Settings > Secrets and variables > Actions)
+          CF_MAX_ITEMS_PER_LIST: ${{ vars.CF_MAX_ITEMS_PER_LIST }}
+          CF_MAX_TOTAL_ITEMS: ${{ vars.CF_MAX_TOTAL_ITEMS }}
+          CF_MIN_INTERVAL: ${{ vars.CF_MIN_INTERVAL }}
+          CF_LIST_PREFIX: ${{ vars.CF_LIST_PREFIX }}
+          CF_POLICY_NAME: ${{ vars.CF_POLICY_NAME }}
+        run: python -m src sync
+
+      - name: Upload combined list artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: combined-blocklist
+          path: blocklists/combined.txt
+          if-no-files-found: ignore
