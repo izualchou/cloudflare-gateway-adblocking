@@ -16,7 +16,7 @@
 
 # Anti-AD — strong coverage for Chinese / Asian ad & tracking domains.
 # Domain-only list ('domains' format). Curated, low false-positive.
-https://anti-ad.net/domains.txt  domains
+# https://anti-ad.net/domains.txt  domains
 
 # ----------------------------------------------------------------------------
 # Optional / larger sources — uncomment to enable. Watch the total size:
@@ -49,3 +49,6 @@ https://anti-ad.net/domains.txt  domains
 
 # EasyList (Adblock Plus syntax; extract domains). Large and noisy for DNS use.
 # https://easylist.to/easylist/easylist.txt  adblock
+
+
+https://cdn.jsdelivr.net/gh/izualchou/adblock-list@main/lists/domains.txt
