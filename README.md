@@ -31,8 +31,11 @@ whitelist.txt ─────────────────┤
 1. **Fetch** each URL in `sources.txt` (format auto-detected: `hosts`, `domains`, `adblock`).
 2. **Integrate**: normalize every entry to a valid hostname, drop entries that
    violate Cloudflare Gateway list rules, dedupe, and subtract `whitelist.txt`.
-3. **Delete old**: remove only *our* lists (name prefix `adblock-`) and the
-   *Block Ads* policy, so we never exceed quotas with stale + new data at once.
+3. **Delete old**: remove only *our* policy (*Block Ads*) **first**, then *our*
+   lists (name prefix `adblock-`, plus any list the old policy referenced). The
+   policy must go before the lists — Cloudflare refuses to delete a list that is
+   still referenced by a policy. This avoids stale + new data coexisting and
+   blowing the list quota.
 4. **Upload**: create lists in chunks (≤ `CF_MAX_ITEMS_PER_LIST`, default 1000),
    wait for Cloudflare's asynchronous write to finish, then create one DNS
    `block` policy that references all lists.
