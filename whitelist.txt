@@ -159,3 +159,17 @@ adobe.com
 akamai.net
 akamaihd.net
 fastly.net
+
+
+parknpay.nsw.gov.au
+*.parknpay.nsw.gov.au
+service.nsw.gov.au
+*.service.nsw.gov.au
+
+nsw.gov.au
+*.nsw.gov.au
+*.amazonaws.com
+*.cloudfront.net
+*.googleapis.com
+*.gstatic.com
+*.google.com
