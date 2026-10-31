@@ -12,7 +12,7 @@
 # ============================================================================
 
 # StevenBlack — unified hosts (ads + malware). High-quality international baseline.
-https://raw.githubusercontent.com/StevenBlack/hosts/master/hosts  hosts
+# https://raw.githubusercontent.com/StevenBlack/hosts/master/hosts  hosts
 
 # Anti-AD — strong coverage for Chinese / Asian ad & tracking domains.
 # Domain-only list ('domains' format). Curated, low false-positive.
