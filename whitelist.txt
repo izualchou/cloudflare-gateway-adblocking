@@ -1,0 +1,161 @@
+# ============================================================================
+# 放行名单（Allowlist）—— 避免国内外常见网站因误杀而无法正常访问
+# ----------------------------------------------------------------------------
+# 规则说明：
+#   * 每行一个域名；以 '#' 开头的行是注释，会被忽略。
+#   * Cloudflare Gateway 的 DOMAIN 列表为【精确匹配】，此处放行的是各站
+#     点的主域（根域）。若某站点的具体子域（如 analytics.xxx.com）被误拦，
+#     请单独把该子域加进来。
+#   * 本名单在整合阶段会从最终的拦截清单中减去（clean -= whitelist），
+#     因此只放行确实被源清单误包含的根域，不会放行广告/追踪子域。
+#   * 若需要“整站包括所有子域都放行”，更稳妥的做法是在 Cloudflare
+#     Gateway 另建一条 Do Not Block 策略，而不是依赖此处（精确匹配）放行。
+# ============================================================================
+
+# ===================== 国内常见网站 =====================
+
+# 搜索引擎 / 门户
+baidu.com
+baiducontent.com
+sogou.com
+so.com
+sm.cn
+
+# 电商 / 支付
+taobao.com
+tmall.com
+alibaba.com
+aliyun.com
+alipay.com
+jd.com
+jdwl.com
+pinduoduo.com
+vip.com
+suning.com
+
+# 社交 / 通讯
+qq.com
+weixin.qq.com
+qzone.qq.com
+tim.qq.com
+weibo.com
+tencent.com
+qcloud.com
+
+# 视频 / 文娱
+bilibili.com
+bilibili.tv
+iqiyi.com
+youku.com
+douyin.com
+toutiao.com
+ixigua.com
+kuaishou.com
+
+# 内容 / 社区
+zhihu.com
+douban.com
+xiaohongshu.com
+tieba.baidu.com
+
+# 邮箱 / 门户
+163.com
+126.com
+netease.com
+sina.com.cn
+sina.com
+sohu.com
+
+# 工具 / 云 / 硬件厂商
+huawei.com
+huaweicloud.com
+mi.com
+xiaomi.com
+meituan.com
+didiglobal.com
+12306.cn
+ctrip.com
+qunar.com
+
+# ===================== 国际常见网站 =====================
+
+# Google
+google.com
+googleapis.com
+gstatic.com
+youtube.com
+googlevideo.com
+googleusercontent.com
+
+# Microsoft
+microsoft.com
+live.com
+office.com
+windows.com
+msn.com
+bing.com
+outlook.com
+onedrive.com
+azure.com
+skype.com
+
+# Apple
+apple.com
+icloud.com
+mzstatic.com
+appleid.com
+
+# Amazon / AWS
+amazon.com
+aws.amazon.com
+cloudfront.net
+amazonaws.com
+
+# Meta（Facebook / Instagram / WhatsApp）
+facebook.com
+instagram.com
+whatsapp.com
+fbcdn.net
+messenger.com
+meta.com
+
+# X / Twitter
+twitter.com
+x.com
+t.co
+
+# 开发者 / 基础设施
+github.com
+githubusercontent.com
+gitlab.com
+cloudflare.com
+cloudflareinsights.com
+cdnjs.cloudflare.com
+
+# AI
+openai.com
+chat.openai.com
+anthropic.com
+claude.ai
+
+# 内容 / 社区
+wikipedia.org
+wikimedia.org
+wikidata.org
+reddit.com
+redditstatic.com
+discord.com
+discordapp.com
+telegram.org
+t.me
+linkedin.com
+
+# 影音 / 其他
+netflix.com
+nflxext.com
+nflxvideo.net
+spotify.com
+adobe.com
+akamai.net
+akamaihd.net
+fastly.net

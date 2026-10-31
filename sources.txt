@@ -1,0 +1,51 @@
+# ============================================================================
+# Upstream blocklist sources for Cloudflare Gateway DNS ad-blocking
+# ----------------------------------------------------------------------------
+# Format of each line:  <url> [format]
+#   format is optional and one of: hosts | domains | adblock
+#   if omitted, it is auto-detected from the file content.
+# Lines starting with '#' are comments and ignored.
+#
+# Domain-only / DNS-safe feeds are preferred (no URL-filter rules). The sync
+# step downloads every source, merges them, drops invalid + duplicate entries,
+# removes anything in whitelist.txt, then uploads the streamlined result.
+# ============================================================================
+
+# StevenBlack — unified hosts (ads + malware). High-quality international baseline.
+https://raw.githubusercontent.com/StevenBlack/hosts/master/hosts  hosts
+
+# Anti-AD — strong coverage for Chinese / Asian ad & tracking domains.
+# Domain-only list ('domains' format). Curated, low false-positive.
+https://anti-ad.net/domains.txt  domains
+
+# ----------------------------------------------------------------------------
+# Optional / larger sources — uncomment to enable. Watch the total size:
+# Cloudflare free Zero Trust caps you around ~300,000 blocked domains total
+# (1,000 per list, ~300 lists). The sync step auto-truncates past
+# CF_MAX_TOTAL_ITEMS (default 300,000). Pick a set that fits your quota.
+# ----------------------------------------------------------------------------
+
+# Hagezi DNS Blocklist "Pro" (domain-only, one per line). Curated, low false-positive.
+# Hagezi tiers (see https://github.com/hagezi/dns-blocklists/tree/main/wildcard):
+#   light / multi(Normal) / pro / pro.plus(Pro++) / ultimate
+# Use the *-onlydomains.txt variants — they are plain domain lists, ideal for Gateway.
+# https://raw.githubusercontent.com/hagezi/dns-blocklists/main/wildcard/pro-onlydomains.txt  domains
+
+# Peter Lowe's ad & tracking server list — hosts format.
+# https://pgl.yoyo.org/adservers/serverlist.php?hostformat=hosts&showintro=0&mimetype=plaintext  hosts
+
+# Hagezi "Pro++" — very large (~300k). Use INSTEAD of the others above if you
+# want maximum coverage on a free plan (it already includes the others).
+# https://raw.githubusercontent.com/hagezi/dns-blocklists/main/wildcard/pro.plus-onlydomains.txt  domains
+
+# Hagezi "Normal" (multi tier) — smaller, good for constrained quotas.
+# https://raw.githubusercontent.com/hagezi/dns-blocklists/main/wildcard/multi-onlydomains.txt  domains
+
+# OISD "small" — good quality, moderate size.
+# https://small.oisd.nl/  domains
+
+# AdGuard DNS filter (Adblock Plus syntax; domains are extracted automatically).
+# https://raw.githubusercontent.com/AdguardTeam/AdguardFilters/master/BaseFilter/sections/adguard_dns_filter.txt  adblock
+
+# EasyList (Adblock Plus syntax; extract domains). Large and noisy for DNS use.
+# https://easylist.to/easylist/easylist.txt  adblock
