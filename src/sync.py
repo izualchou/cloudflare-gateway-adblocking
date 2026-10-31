@@ -6,11 +6,17 @@ list + policy, then upload the streamlined result.
 """
 from __future__ import annotations
 
+import re
+
 from loguru import logger
 
 from . import settings
 from .cloudflare import CloudflareClient, our_lists, our_policy
 from .sources import fetch_all_domains, write_combined
+
+# Cloudflare list IDs referenced inside a Gateway policy's `traffic` expression,
+# e.g. "any(dns.domains[*] in $5435c6c2-5780-4695-b166-cbe87c266a9c)".
+_LIST_REF_RE = re.compile(r"\$([0-9a-fA-F-]{8,})")
 
 
 def chunk_domains(domains: set[str], size: int = settings.MAX_ITEMS_PER_LIST) -> list[list[str]]:
@@ -18,18 +24,41 @@ def chunk_domains(domains: set[str], size: int = settings.MAX_ITEMS_PER_LIST) ->
     return [items[i : i + size] for i in range(0, len(items), size)]
 
 
-def delete_old(client: CloudflareClient) -> None:
-    lists = our_lists(client.get_lists())
-    for l in lists:
-        logger.info(f"Deleting old list {l['name']} ({l['id']})")
-        client.delete_list(l["id"])
+def _policy_list_ids(policy: dict) -> set[str]:
+    """Extract the Cloudflare list IDs a Gateway policy references in `traffic`."""
+    return set(_LIST_REF_RE.findall(policy.get("traffic", "")))
 
+
+def delete_old(client: CloudflareClient) -> None:
+    # 1) Delete OUR policy FIRST. Cloudflare refuses to delete a list that is
+    #    still referenced by a policy ("List is in use at gateway policies"),
+    #    so the policy must go before any list.
     policy = our_policy(client.get_rules())
+    referenced: set[str] = set()
     if policy:
         logger.info(f"Deleting old policy {policy['name']} ({policy['id']})")
-        client.delete_policy(policy["id"])
+        referenced = _policy_list_ids(policy)
+        try:
+            client.delete_policy(policy["id"])
+        except RuntimeError as exc:
+            logger.warning(f"Could not delete policy (continuing): {exc}")
     else:
         logger.info("No existing policy to delete.")
+
+    # 2) Delete our old lists: those matching our prefix AND any list the old
+    #    policy referenced (this also cleans up lists created before we adopted
+    #    the 'adblock-' prefix, e.g. '001', '002', ...).
+    lists = our_lists(client.get_lists())
+    to_delete = {l["id"] for l in lists} | referenced
+    if not to_delete:
+        logger.info("No old lists to delete.")
+        return
+    for lid in sorted(to_delete):
+        logger.info(f"Deleting old list {lid}")
+        try:
+            client.delete_list(lid)
+        except RuntimeError as exc:
+            logger.warning(f"Could not delete list {lid} (continuing): {exc}")
 
 
 def run_sync() -> None:

@@ -34,8 +34,10 @@ ACCOUNT_ID = os.environ.get("CLOUDFLARE_ACCOUNT_ID", "")
 TOKEN = os.environ.get("CLOUDFLARE_TOKEN", "")
 
 # --- Naming: only resources we own (prefixed / named like this) are touched ---
-LIST_PREFIX = os.environ.get("CF_LIST_PREFIX", "adblock-")
-POLICY_NAME = os.environ.get("CF_POLICY_NAME", "Block Ads")
+# NB: use `or` so an *empty* env var (e.g. an unset GitHub repo Variable) falls
+# back to the default instead of disabling the prefix filter.
+LIST_PREFIX = os.environ.get("CF_LIST_PREFIX") or "adblock-"
+POLICY_NAME = os.environ.get("CF_POLICY_NAME") or "Block Ads"
 
 # --- Sizing / Cloudflare limits ---
 # Gateway list capacity: 1,000 items/list (Standard), 5,000 (Enterprise).
